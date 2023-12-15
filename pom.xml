@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ada</groupId>
-	<artifactId>Bookshop</artifactId>
+	<artifactId>book-store</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Bookshop</name>
-	<description>Primeiro Projeto Spring</description>
+	<description>Book Store project for applying tests</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -55,6 +55,13 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- Swagger -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.2.0</version>
 		</dependency>
 	</dependencies>
 	<build>
