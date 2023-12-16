@@ -22,11 +22,16 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+
+    private UserRepository userRepository;
+
+    private PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private void validUser(Integer id) throws IdNotFoundError {
         Optional<User> found = userRepository.findById(id);
@@ -64,8 +69,9 @@ public class UserService {
 //
 //    }
 
-    public void deleteUser(Integer id){
-        User user = userRepository.findById(id).orElseThrow();
+    public void deleteUser(Integer id) throws IdNotFoundError {
+        validUser(id);
+        User user = userRepository.findById(id).get();
         user.setActive(false);
         userRepository.save(user);
     }

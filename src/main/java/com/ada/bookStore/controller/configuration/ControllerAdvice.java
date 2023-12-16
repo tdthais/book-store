@@ -41,6 +41,7 @@ public class ControllerAdvice {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PasswordValidationError.class)
     public String handlerPassword(PasswordValidationError exception){
+
         return exception.getDescription();
     }
 

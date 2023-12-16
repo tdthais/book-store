@@ -1,10 +1,16 @@
 package com.ada.bookStore.unit.service.user;
 
+import com.ada.bookStore.controller.dto.UserRequest;
 import com.ada.bookStore.controller.dto.UserResponse;
+import com.ada.bookStore.controller.exception.IdNotFoundError;
+import com.ada.bookStore.controller.exception.PasswordValidationError;
 import com.ada.bookStore.model.User;
 import com.ada.bookStore.repository.UserRepository;
 import com.ada.bookStore.service.UserService;
 import com.ada.bookStore.utils.UserConvert;
+import com.ada.bookStore.utils.Validator;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,10 +31,12 @@ import java.util.Optional;
 @ExtendWith(SpringExtension.class)
 public class UserServiceUnitTest {
 
-    private User user;
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    public PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -33,22 +44,51 @@ public class UserServiceUnitTest {
     @BeforeEach
     public void setup() {
 //        user = new User();
-////        user.setId(1);
-//        user.setName("maria");
-//        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(user));
+//        user.setDocument("unit-test");
+//        Mockito.when(userRepository.save(Mockito.any())).thenReturn(user);
+
+
+//        Mockito.when(userRepository.findByDocument(Mockito.any()))/*Método que será chamado pela execução do programa*/
+//                .thenReturn(user);/*Retorno que deve ser feito para essa chamada*/
+//
+    }
+
+
+    @Test
+    public void criar_novo_usuario_com_dados_corretos_deve_ter_sucesso() throws PasswordValidationError {
+        UserRequest userRequest = new UserRequest("nome","email","123456");
+
+        this.passwordEncoder = new BCryptPasswordEncoder();
+        userService = new UserService(userRepository, passwordEncoder);
+
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> {
+            final User entity = invocation.getArgument(0);
+            ReflectionTestUtils.setField(entity, "id", RandomUtils.nextInt());
+            return entity;
+        });
+
+        UserResponse userResponse = userService.saveUser(userRequest);
+
+        Assertions.assertEquals(userRequest.getName(),userResponse.getName());
+        Assertions.assertEquals(userRequest.getEmail(),userResponse.getEmail());
+
+        Mockito.verify(userRepository).save(Mockito.any());
 
     }
 
     @Test
-    public void busca_por_user_existente_por_id_deve_retornar_user(){
-
+    public void busca_por_user_existente_por_id_deve_retornar_user() throws Exception {
+        User user = new User();
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(user));
-        Optional<User> userResponse =  userRepository.findById(62);
+
+        UserResponse userResponse = userService.getUserById(62);
         Assertions.assertNotNull(userResponse);
+
     }
 
     @Test
     public void busca_por_user_inexistente_por_id_deve_retornar_excecao(){
+
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
         Optional<User> userResponse =  userRepository.findById(62);
         Assertions.assertTrue(userResponse.isEmpty());
@@ -79,34 +119,20 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void deve_mudar_condicao_active_de_user_existente_para_falso(){
+    public void deleteUser_deve_mudar_condicao_active_de_user_para_falso_e_salvar_no_banco() throws PasswordValidationError, IdNotFoundError {
         User user = new User();
-        user.setId(4);
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(user));
 
-        userService.deleteUser(4);
+        userService.deleteUser(1);
+        Assertions.assertEquals(false, user.getActive());
     }
-//
-////    @Test
-////    public nao_deve_mudar_condicao_active_de_user_inexistente_para_falso(){
-////
-////    }
-//
-//    @Test
-//    public void deve_mudar_nome_de_user_existente(){
-//
-//    }
-//
-//    @Test
-//    public void deve_mudar_email_de_user_existente(){
-//
-//    }
-//
-//    @Test
-//    public void deve_mudar_senha_de_user_existente(){
-//
-//    }
-//
+
+
+    @Test
+    public void deve_mudar_senha_de_user_existente(){
+
+    }
+
 
 
 
