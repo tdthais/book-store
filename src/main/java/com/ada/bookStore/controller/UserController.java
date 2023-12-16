@@ -2,6 +2,7 @@ package com.ada.bookStore.controller;
 
 import com.ada.bookStore.controller.dto.UserRequest;
 import com.ada.bookStore.controller.dto.UserResponse;
+import com.ada.bookStore.controller.exception.IdNotFoundError;
 import com.ada.bookStore.controller.exception.PasswordValidationError;
 import com.ada.bookStore.service.UserService;
 import jakarta.validation.Valid;
@@ -20,28 +21,28 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping
-    public ResponseEntity<Page<UserResponse>>getUsers(
-            @RequestParam(
-                    value = "page",
-                    required = false,
-                    defaultValue = "0"
-            ) int page,
-            @RequestParam(
-                    value = "size",
-                    required = false,
-                    defaultValue = "10"
-            ) int size,
-            @RequestParam(
-                    value = "direction",
-                    required = false,
-                    defaultValue = "ASC"
-            ) String direction
-
-    ){
-
-        return ResponseEntity.ok(userService.getUsers(page, size, direction));
-    }
+//    @RequestMapping
+//    public ResponseEntity<Page<UserResponse>>getUsers(
+//            @RequestParam(
+//                    value = "page",
+//                    required = false,
+//                    defaultValue = "0"
+//            ) int page,
+//            @RequestParam(
+//                    value = "size",
+//                    required = false,
+//                    defaultValue = "10"
+//            ) int size,
+//            @RequestParam(
+//                    value = "direction",
+//                    required = false,
+//                    defaultValue = "ASC"
+//            ) String direction
+//
+//    ){
+//
+//        return ResponseEntity.ok(userService.getUsers(page, size, direction));
+//    }
 
     @PostMapping
     public ResponseEntity<UserResponse> saveUser(
@@ -52,7 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable Integer id){
+    public ResponseEntity<UserResponse> getUser(@PathVariable Integer id) throws IdNotFoundError {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
@@ -68,7 +69,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id){
+    public void deleteUser(@PathVariable Integer id) throws IdNotFoundError {
         userService.deleteUser(id);
     }
 

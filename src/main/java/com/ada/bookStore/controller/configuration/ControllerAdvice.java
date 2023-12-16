@@ -1,5 +1,6 @@
 package com.ada.bookStore.controller.configuration;
 
+import com.ada.bookStore.controller.exception.IdNotFoundError;
 import com.ada.bookStore.controller.exception.PasswordValidationError;
 import com.ada.bookStore.controller.exception.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,17 @@ public class ControllerAdvice {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PasswordValidationError.class)
     public String handlerPassword(PasswordValidationError exception){
+
         return exception.getDescription();
     }
+
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(IdNotFoundError.class)
+    public String handlerIdNotFound(IdNotFoundError exception){
+        return exception.getDescription();
+    }
+
+
+
+
 }
