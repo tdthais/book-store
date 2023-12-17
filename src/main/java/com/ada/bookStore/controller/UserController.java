@@ -21,33 +21,10 @@ public class UserController {
     @Autowired
     UserService userService;
 
-//    @RequestMapping
-//    public ResponseEntity<Page<UserResponse>>getUsers(
-//            @RequestParam(
-//                    value = "page",
-//                    required = false,
-//                    defaultValue = "0"
-//            ) int page,
-//            @RequestParam(
-//                    value = "size",
-//                    required = false,
-//                    defaultValue = "10"
-//            ) int size,
-//            @RequestParam(
-//                    value = "direction",
-//                    required = false,
-//                    defaultValue = "ASC"
-//            ) String direction
-//
-//    ){
-//
-//        return ResponseEntity.ok(userService.getUsers(page, size, direction));
-//    }
-
     @PostMapping
     public ResponseEntity<UserResponse> saveUser(
             @Valid @RequestBody UserRequest userDTO
-    ) throws PasswordValidationError {
+    ) {
         UserResponse user =  userService.saveUser(userDTO);
         return ResponseEntity.created(URI.create("/user/"+user.getId())).body(user);
     }

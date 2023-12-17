@@ -8,7 +8,7 @@ import com.ada.bookStore.model.User;
 import com.ada.bookStore.repository.UserRepository;
 import com.ada.bookStore.service.UserService;
 import com.ada.bookStore.utils.UserConvert;
-import com.ada.bookStore.utils.Validator;
+//import com.ada.bookStore.utils.Validator;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
@@ -40,18 +40,6 @@ public class UserServiceUnitTest {
 
     @InjectMocks
     private UserService userService;
-
-    @BeforeEach
-    public void setup() {
-//        user = new User();
-//        user.setDocument("unit-test");
-//        Mockito.when(userRepository.save(Mockito.any())).thenReturn(user);
-
-
-//        Mockito.when(userRepository.findByDocument(Mockito.any()))/*Método que será chamado pela execução do programa*/
-//                .thenReturn(user);/*Retorno que deve ser feito para essa chamada*/
-//
-    }
 
 
     @Test
@@ -86,14 +74,6 @@ public class UserServiceUnitTest {
 
     }
 
-    @Test
-    public void busca_por_user_inexistente_por_id_deve_retornar_excecao(){
-
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.empty());
-        Optional<User> userResponse =  userRepository.findById(62);
-        Assertions.assertTrue(userResponse.isEmpty());
-
-    }
 
     @Test
     public void busca_por_nomes_de_users_existentes_deve_retornar_lista_de_users(){

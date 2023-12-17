@@ -7,11 +7,6 @@ import com.ada.bookStore.controller.exception.PasswordValidationError;
 import com.ada.bookStore.model.User;
 import com.ada.bookStore.repository.UserRepository;
 import com.ada.bookStore.utils.UserConvert;
-import com.ada.bookStore.utils.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,21 +28,20 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    private void validUser(Integer id) throws IdNotFoundError {
+    public void validUser(Integer id) throws IdNotFoundError {
         Optional<User> found = userRepository.findById(id);
         if (found.isEmpty()) {
             throw new IdNotFoundError("Cliente não encontrado");
         }
     }
 
-    public UserResponse saveUser(UserRequest userDTO) throws PasswordValidationError {
+    public UserResponse saveUser(UserRequest userDTO) {
         User user = UserConvert.toEntity(userDTO);
 
         String encodePassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodePassword);
 
         user.setActive(true);
-        if(!Validator.passwordValidate(user.getPassword())) throw new PasswordValidationError("Senha deve seguir o padrao");
         User userEntity = userRepository.save(user);
         return UserConvert.toResponse(userEntity);
     }
