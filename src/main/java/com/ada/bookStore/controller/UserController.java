@@ -21,33 +21,10 @@ public class UserController {
     @Autowired
     UserService userService;
 
-//    @RequestMapping
-//    public ResponseEntity<Page<UserResponse>>getUsers(
-//            @RequestParam(
-//                    value = "page",
-//                    required = false,
-//                    defaultValue = "0"
-//            ) int page,
-//            @RequestParam(
-//                    value = "size",
-//                    required = false,
-//                    defaultValue = "10"
-//            ) int size,
-//            @RequestParam(
-//                    value = "direction",
-//                    required = false,
-//                    defaultValue = "ASC"
-//            ) String direction
-//
-//    ){
-//
-//        return ResponseEntity.ok(userService.getUsers(page, size, direction));
-//    }
-
     @PostMapping
     public ResponseEntity<UserResponse> saveUser(
             @Valid @RequestBody UserRequest userDTO
-    ) throws PasswordValidationError {
+    ) {
         UserResponse user =  userService.saveUser(userDTO);
         return ResponseEntity.created(URI.create("/user/"+user.getId())).body(user);
     }
@@ -57,12 +34,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-//    @GetMapping("/email/{email}")
-//    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email){
-//        return  ResponseEntity.ok(userService.getUserByEmail(email));
-//    }
-
-    //, @PathVariable Integer id
     @GetMapping("/name/{name}")
     public ResponseEntity<List<UserResponse>> getAllUserByName(@PathVariable String name){
         return ResponseEntity.ok(userService.getAllByName(name));
