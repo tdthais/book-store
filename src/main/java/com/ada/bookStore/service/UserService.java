@@ -62,13 +62,6 @@ public class UserService {
         return UserConvert.toResponseList(userRepository.findAllByName(name));
     }
 
-//    public Page<UserResponse> getUsers(int page, int size, String direction){
-//        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(direction), "name");
-//        Page<User> users = userRepository.findAll(pageRequest);
-//        return UserConvert.toResponsePage(users);
-//
-//    }
-
     public void deleteUser(Integer id) throws IdNotFoundError {
         validUser(id);
         User user = userRepository.findById(id).get();
