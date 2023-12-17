@@ -8,11 +8,8 @@ import com.ada.bookStore.model.User;
 import com.ada.bookStore.repository.UserRepository;
 import com.ada.bookStore.service.UserService;
 import com.ada.bookStore.utils.UserConvert;
-//import com.ada.bookStore.utils.Validator;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,7 +40,7 @@ public class UserServiceUnitTest {
 
 
     @Test
-    public void criar_novo_usuario_com_dados_corretos_deve_ter_sucesso() throws PasswordValidationError {
+    public void criar_novo_usuario_com_dados_corretos_deve_ter_sucesso() {
         UserRequest userRequest = new UserRequest("nome","email","123456");
 
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -99,11 +96,27 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void deleteUser_deve_mudar_condicao_active_de_user_para_falso_e_salvar_no_banco() throws PasswordValidationError, IdNotFoundError {
-        User user = new User();
-        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(user));
+    public void deleteUser_deve_mudar_condicao_active_de_user_para_falso_e_salvar_no_banco() throws IdNotFoundError {
 
-        userService.deleteUser(1);
+        userService = new UserService(userRepository, passwordEncoder);
+
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(invocation -> {
+            final User entity = invocation.getArgument(0);
+            ReflectionTestUtils.setField(entity, "id", RandomUtils.nextInt());
+            return entity;
+        });
+
+        User user = new User();
+        user.setName("NomeTesteDelete");
+        user.setPassword("142638");
+        user.setActive(true);
+        user.setEmail("email@testedelete.com");
+        userRepository.save(user);
+        System.out.println(user.getId());
+
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        userService.deleteUser(user.getId());
         Assertions.assertEquals(false, user.getActive());
     }
 
